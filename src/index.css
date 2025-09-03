@@ -10,65 +10,11 @@ html {
 }
 
 body {
-  background-image: url('/bg.gif');
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* Ensure background stays fixed on all devices including mobile */
-@media (max-width: 768px) {
-  body {
-    background-image: url('/bg.gif');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-}
-
-/* iOS Safari specific - force fixed background */
-@supports (-webkit-touch-callout: none) {
-  body {
-    background-image: url('/bg.gif');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-}
-
-/* Android Chrome specific - ensure fixed background */
-@supports not (-webkit-touch-callout: none) {
-  body {
-    background-image: url('/bg.gif');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-  }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  body {
-    background-image: url('/bg.gif');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-}
-
-/* Force background to stay absolutely static during scroll */
+/* iOS-compatible fixed background using pseudo-element */
 body::before {
   content: '';
   position: fixed;
@@ -82,12 +28,37 @@ body::before {
   background-repeat: no-repeat;
   z-index: -1;
   pointer-events: none;
+  /* iOS-specific optimizations */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-/* Hide the ::before pseudo-element on browsers that support background-attachment: fixed properly */
-@supports (background-attachment: fixed) {
+/* Ensure the pseudo-element background works on all devices */
+@media (max-width: 768px) {
   body::before {
-    display: none;
+    /* Force hardware acceleration on mobile */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+/* iOS Safari specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  body::before {
+    /* Ensure the background stays fixed on iOS */
+    position: fixed !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 }
 
