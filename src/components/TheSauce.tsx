@@ -74,34 +74,11 @@ const TheSauce = forwardRef<TheSauceRef, TheSauceProps>(({ openSection, onSectio
   const scrollToSection = (sectionId: string, offset: number = 100) => {
     const sectionElement = document.getElementById(sectionId);
     if (sectionElement) {
-      // Get the section's position relative to the viewport
-      const rect = sectionElement.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Account for navigation height (approximately 64px) plus additional offset
-      const navHeight = 64;
-      const totalOffset = navHeight + offset;
-      
-      // Calculate the target scroll position with offset for better visibility
-      const targetScrollTop = scrollTop + rect.top - totalOffset;
-      
-      // Smooth scroll to the target position
-      window.scrollTo({
-        top: targetScrollTop,
-        behavior: 'smooth'
+      // Use scrollIntoView for reliable positioning that respects scroll-padding-top
+      sectionElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
-      
-      // Additional scroll adjustment after animation to ensure perfect positioning
-      setTimeout(() => {
-        const finalRect = sectionElement.getBoundingClientRect();
-        if (finalRect.top < (navHeight + 20)) { // If still too close to navigation
-          const finalAdjustment = scrollTop + finalRect.top - (navHeight + 20);
-          window.scrollTo({
-            top: finalAdjustment,
-            behavior: 'smooth'
-          });
-        }
-      }, 600); // Wait for initial scroll animation to complete
     }
   };
 

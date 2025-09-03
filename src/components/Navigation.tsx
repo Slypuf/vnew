@@ -68,20 +68,11 @@ const Navigation: React.FC<NavigationProps> = ({ onNavigate }) => {
     // Update active state immediately
     setActive(id);
     
-    // Get navbar height for proper offset
-    const navHeight = navRef.current?.getBoundingClientRect().height || 64;
-    console.log(`📏 Navbar height: ${navHeight}px`);
-    
-    // Calculate target scroll position - bring section to TOP of viewport
-    const elementRect = element.getBoundingClientRect();
-    const targetScrollY = window.scrollY + elementRect.top - navHeight - 10;
-    
-    console.log(`🎯 Scrolling to TOP of section: ${targetScrollY}px (current: ${window.scrollY}px)`);
-    
-    // Smooth scroll to calculated position
-    window.scrollTo({
-      top: Math.max(0, targetScrollY),
-      behavior: 'smooth'
+    // Use scrollIntoView for reliable positioning that respects scroll-padding-top
+    console.log(`🎯 Using scrollIntoView for section: ${id}`);
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
     });
     
     // Call parent navigation handler if provided
